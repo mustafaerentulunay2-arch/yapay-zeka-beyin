@@ -7,7 +7,7 @@ export default function MustafaZekaPaneli() {
   const [sonuc, setSonuc] = useState<string | null>(null);
   const [yukleniyor, setYukleniyor] = useState(false);
 
-  // Vercel kasasındaki anahtarı kullanır
+  // Sadece bu satır kalmalı, Vercel kasasına bağlanır
   const ANAHTAR = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
   const analizEt = async () => {
@@ -29,10 +29,10 @@ export default function MustafaZekaPaneli() {
       if (data.candidates && data.candidates[0].content.parts[0].text) {
         setSonuc(data.candidates[0].content.parts[0].text);
       } else {
-        setSonuc("Bağlantı başarılı ama cevap gelmedi. Anahtarı kontrol et!");
+        setSonuc("Cevap alınamadı, anahtarını kontrol et!");
       }
     } catch (hata) {
-      setSonuc("Hata: Yapay zeka şu an meşgul!");
+      setSonuc("Yapay zeka şu an meşgul!");
     } finally {
       setYukleniyor(false);
     }
@@ -46,22 +46,21 @@ export default function MustafaZekaPaneli() {
       <textarea 
         value={metin} 
         onChange={(e) => setMetin(e.target.value)}
-        placeholder="Karmaşık bir cümle yaz, duygusunu ben çözeyim..."
-        style={{ width: '100%', maxWidth: '600px', height: '150px', padding: '20px', borderRadius: '15px', fontSize: '18px', border: '2px solid #3b82f6', backgroundColor: '#1a1a1a', color: 'white', outline: 'none' }}
+        placeholder="Bir şeyler yaz..."
+        style={{ width: '100%', maxWidth: '600px', height: '150px', padding: '20px', borderRadius: '15px', border: '2px solid #3b82f6', backgroundColor: '#1a1a1a', color: 'white' }}
       />
       <br />
       <button 
         onClick={analizEt}
         disabled={yukleniyor}
-        style={{ marginTop: '20px', padding: '15px 50px', backgroundColor: yukleniyor ? '#4b5563' : '#2563eb', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '20px' }}
+        style={{ marginTop: '20px', padding: '15px 50px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}
       >
         {yukleniyor ? 'Düşünüyor...' : 'Gerçek Zeka Analizi'}
       </button>
 
       {sonuc && (
-        <div style={{ marginTop: '40px', padding: '30px', border: '3px solid #2563eb', borderRadius: '20px', backgroundColor: '#111827', display: 'inline-block', minWidth: '350px' }}>
-          <h2 style={{ margin: '0 0 10px 0', fontSize: '18px', color: '#9ca3af', textTransform: 'uppercase' }}>Analiz Sonucu:</h2>
-          <p style={{ fontSize: '36px', fontWeight: 'bold', margin: '0' }}>{sonuc}</p>
+        <div style={{ marginTop: '40px', padding: '30px', border: '3px solid #2563eb', borderRadius: '20px', backgroundColor: '#111827' }}>
+          <p style={{ fontSize: '30px', fontWeight: 'bold' }}>{sonuc}</p>
         </div>
       )}
     </div>
