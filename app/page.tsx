@@ -22,7 +22,7 @@ export default function AnalizPaneli() {
       />
       <button 
         onClick={analizEt}
-        style={{ marginTop: '20px', padding: '15px 30px', backgroundColor: '#2563eb', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+        style={{ marginTop: '20px', padding: '15px 30px', backgroundColor: '#2563eb', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', color: 'white' }}
       >
         Analiz Et
       </button>
