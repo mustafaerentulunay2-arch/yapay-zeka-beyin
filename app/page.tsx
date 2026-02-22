@@ -9,7 +9,7 @@ export default function MustafaZekaPaneli() {
 
   // NOT: Eğer gerçek bir Gemini anahtarın yoksa şimdilik burayı boş bırakabilirsin.
   // Ama gerçek zeka istiyorsan tırnak içine o uzun kodu yapıştır.
-  const ANAHTAR = "BURAYA_ANAHTARI_YAPISTIR";
+  const ANAHTAR = "AIzaSyCsecfq02D1uD-6o6y-w9EnZvAgdi8X1uQ";
 
   const analizEt = async () => {
     if (!metin) return alert("Lütfen bir metin girin!");
