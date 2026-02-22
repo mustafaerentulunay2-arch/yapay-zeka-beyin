@@ -7,17 +7,15 @@ export default function MustafaZekaPaneli() {
   const [sonuc, setSonuc] = useState<string | null>(null);
   const [yukleniyor, setYukleniyor] = useState(false);
 
-  // NOT: Eğer gerçek bir Gemini anahtarın yoksa şimdilik burayı boş bırakabilirsin.
-  // Ama gerçek zeka istiyorsan tırnak içine o uzun kodu yapıştır.
-  const ANAHTAR = "AIzaSyCsecfq02D1uD-6o6y-w9EnZvAgdi8X1uQ";
-const ANAHTAR = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  // Vercel kasasındaki anahtarı kullanır
+  const ANAHTAR = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+
   const analizEt = async () => {
     if (!metin) return alert("Lütfen bir metin girin!");
     setYukleniyor(true);
     setSonuc(null);
 
     try {
-      // Bu kod direkt Google'ın en hızlı yapay zekasına bağlanır
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${ANAHTAR}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,14 +26,13 @@ const ANAHTAR = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
       const data = await response.json();
       
-      // Yapay zekadan gelen cevabı ekrana yazar
       if (data.candidates && data.candidates[0].content.parts[0].text) {
         setSonuc(data.candidates[0].content.parts[0].text);
       } else {
-        setSonuc("Anahtar hatası veya kota doldu!");
+        setSonuc("Bağlantı başarılı ama cevap gelmedi. Anahtarı kontrol et!");
       }
     } catch (hata) {
-      setSonuc("Bağlantı hatası: Lütfen anahtarını kontrol et!");
+      setSonuc("Hata: Yapay zeka şu an meşgul!");
     } finally {
       setYukleniyor(false);
     }
@@ -44,19 +41,19 @@ const ANAHTAR = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   return (
     <div style={{ backgroundColor: '#0a0a0a', color: 'white', minHeight: '100vh', padding: '40px', textAlign: 'center', fontFamily: 'sans-serif' }}>
       <h1 style={{ color: '#3b82f6', fontSize: '32px', fontWeight: 'bold' }}>Mustafa'nın Dahi Analiz Paneli</h1>
-      <p style={{ color: '#9ca3af', marginBottom: '30px' }}>Gerçek Yapay Zeka (Gemini 1.5) ile donatıldı.</p>
+      <p style={{ color: '#9ca3af', marginBottom: '30px' }}>Gerçek Yapay Zeka Beyni Aktif 🚀</p>
 
       <textarea 
         value={metin} 
         onChange={(e) => setMetin(e.target.value)}
-        placeholder="Cümleni buraya yaz, duygusunu ben anlayayım..."
+        placeholder="Karmaşık bir cümle yaz, duygusunu ben çözeyim..."
         style={{ width: '100%', maxWidth: '600px', height: '150px', padding: '20px', borderRadius: '15px', fontSize: '18px', border: '2px solid #3b82f6', backgroundColor: '#1a1a1a', color: 'white', outline: 'none' }}
       />
       <br />
       <button 
         onClick={analizEt}
         disabled={yukleniyor}
-        style={{ marginTop: '20px', padding: '15px 50px', backgroundColor: yukleniyor ? '#4b5563' : '#2563eb', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '20px', transition: '0.3s' }}
+        style={{ marginTop: '20px', padding: '15px 50px', backgroundColor: yukleniyor ? '#4b5563' : '#2563eb', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '20px' }}
       >
         {yukleniyor ? 'Düşünüyor...' : 'Gerçek Zeka Analizi'}
       </button>
@@ -64,7 +61,7 @@ const ANAHTAR = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
       {sonuc && (
         <div style={{ marginTop: '40px', padding: '30px', border: '3px solid #2563eb', borderRadius: '20px', backgroundColor: '#111827', display: 'inline-block', minWidth: '350px' }}>
           <h2 style={{ margin: '0 0 10px 0', fontSize: '18px', color: '#9ca3af', textTransform: 'uppercase' }}>Analiz Sonucu:</h2>
-          <p style={{ fontSize: '36px', fontWeight: 'bold', margin: '0', color: '#ffffff' }}>{sonuc}</p>
+          <p style={{ fontSize: '36px', fontWeight: 'bold', margin: '0' }}>{sonuc}</p>
         </div>
       )}
     </div>
