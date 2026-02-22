@@ -9,7 +9,6 @@ export default function MustafaZekaPaneli() {
 
   // Sadece bu satır kalmalı, Vercel kasasına bağlanır
   const ANAHTAR = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-
   const analizEt = async () => {
     if (!metin) return alert("Lütfen bir metin girin!");
     setYukleniyor(true);
