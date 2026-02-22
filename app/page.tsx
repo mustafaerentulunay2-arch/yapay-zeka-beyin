@@ -2,59 +2,69 @@
 
 import React, { useState } from 'react';
 
-export default function AkilliAnalizPaneli() {
+export default function MustafaZekaPaneli() {
   const [metin, setMetin] = useState('');
   const [sonuc, setSonuc] = useState<string | null>(null);
+  const [yukleniyor, setYukleniyor] = useState(false);
 
-  const analizEt = () => {
+  // NOT: Eğer gerçek bir Gemini anahtarın yoksa şimdilik burayı boş bırakabilirsin.
+  // Ama gerçek zeka istiyorsan tırnak içine o uzun kodu yapıştır.
+  const ANAHTAR = "BURAYA_ANAHTARI_YAPISTIR";
+
+  const analizEt = async () => {
     if (!metin) return alert("Lütfen bir metin girin!");
+    setYukleniyor(true);
+    setSonuc(null);
 
-    // BURASI ARTIK AKILLI: Kelimeleri kontrol ediyor
-    const kucukMetin = metin.toLowerCase();
-    const olumsuzKelimeler = ['kötü', 'berbat', 'hayır', 'olmaz', 'mutsuz', 'nefret', 'çirkin', 'başarısız'];
-    const olumluKelimeler = ['iyi', 'güzel', 'evet', 'harika', 'mutlu', 'seviyorum', 'başarılı', 'muazzam'];
+    try {
+      // Bu kod direkt Google'ın en hızlı yapay zekasına bağlanır
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${ANAHTAR}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `Bu metnin duygusunu analiz et ve sadece 'Olumlu', 'Olumsuz' veya 'Nötr' yaz. Yanına bir de emoji ekle: ${metin}` }] }]
+        })
+      });
 
-    let analizSonucu = "Nötr (Duygu anlaşılamadı)";
-
-    // Olumsuzluk kontrolü
-    if (olumsuzKelimeler.some(kelime => kucukMetin.includes(kelime))) {
-      analizSonucu = "Olumsuz 🔴";
-    } 
-    // Olumluluk kontrolü
-    else if (olumluKelimeler.some(kelime => kucukMetin.includes(kelime))) {
-      analizSonucu = "Olumlu 🟢";
+      const data = await response.json();
+      
+      // Yapay zekadan gelen cevabı ekrana yazar
+      if (data.candidates && data.candidates[0].content.parts[0].text) {
+        setSonuc(data.candidates[0].content.parts[0].text);
+      } else {
+        setSonuc("Anahtar hatası veya kota doldu!");
+      }
+    } catch (hata) {
+      setSonuc("Bağlantı hatası: Lütfen anahtarını kontrol et!");
+    } finally {
+      setYukleniyor(false);
     }
-
-    setSonuc(analizSonucu);
   };
 
   return (
-    <div style={{ backgroundColor: 'black', color: 'white', height: '100vh', padding: '40px', textAlign: 'center', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '28px', marginBottom: '20px', color: '#3b82f6' }}>Mustafa'nın Akıllı Analiz Paneli</h1>
-      <p style={{ marginBottom: '20px', color: '#9ca3af' }}>Yazdığınız kelimelerin duygusunu analiz ederim.</p>
-      
+    <div style={{ backgroundColor: '#0a0a0a', color: 'white', minHeight: '100vh', padding: '40px', textAlign: 'center', fontFamily: 'sans-serif' }}>
+      <h1 style={{ color: '#3b82f6', fontSize: '32px', fontWeight: 'bold' }}>Mustafa'nın Dahi Analiz Paneli</h1>
+      <p style={{ color: '#9ca3af', marginBottom: '30px' }}>Gerçek Yapay Zeka (Gemini 1.5) ile donatıldı.</p>
+
       <textarea 
         value={metin} 
         onChange={(e) => setMetin(e.target.value)}
-        placeholder="Örn: Bu yemek çok kötü veya Bugün harika bir gün..."
-        style={{ width: '100%', maxWidth: '600px', height: '150px', padding: '15px', color: 'black', borderRadius: '12px', fontSize: '16px', border: 'none' }}
+        placeholder="Cümleni buraya yaz, duygusunu ben anlayayım..."
+        style={{ width: '100%', maxWidth: '600px', height: '150px', padding: '20px', borderRadius: '15px', fontSize: '18px', border: '2px solid #3b82f6', backgroundColor: '#1a1a1a', color: 'white', outline: 'none' }}
       />
-      
       <br />
-      
       <button 
         onClick={analizEt}
-        style={{ marginTop: '20px', padding: '15px 40px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '18px', transition: '0.3s' }}
+        disabled={yukleniyor}
+        style={{ marginTop: '20px', padding: '15px 50px', backgroundColor: yukleniyor ? '#4b5563' : '#2563eb', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '20px', transition: '0.3s' }}
       >
-        Duyguyu Analiz Et
+        {yukleniyor ? 'Düşünüyor...' : 'Gerçek Zeka Analizi'}
       </button>
 
       {sonuc && (
-        <div style={{ marginTop: '40px', padding: '25px', border: '2px solid #3b82f6', borderRadius: '15px', backgroundColor: '#111827', display: 'inline-block', minWidth: '300px' }}>
-          <h2 style={{ margin: '0', fontSize: '20px' }}>Analiz Sonucu:</h2>
-          <p style={{ fontSize: '24px', fontWeight: 'bold', marginTop: '10px', color: sonuc.includes('Olumlu') ? '#10b981' : (sonuc.includes('Olumsuz') ? '#ef4444' : '#f59e0b') }}>
-            {sonuc}
-          </p>
+        <div style={{ marginTop: '40px', padding: '30px', border: '3px solid #2563eb', borderRadius: '20px', backgroundColor: '#111827', display: 'inline-block', minWidth: '350px' }}>
+          <h2 style={{ margin: '0 0 10px 0', fontSize: '18px', color: '#9ca3af', textTransform: 'uppercase' }}>Analiz Sonucu:</h2>
+          <p style={{ fontSize: '36px', fontWeight: 'bold', margin: '0', color: '#ffffff' }}>{sonuc}</p>
         </div>
       )}
     </div>
