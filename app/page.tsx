@@ -4,10 +4,11 @@ import React, { useState } from 'react';
 
 export default function MustafaZekaPaneli() {
   const [metin, setMetin] = useState('');
-  const [sonuc, setSonuc] = useState(null);
+  // Hata veren kısım düzeltildi: Hem metin hem null kabul eder hale getirildi
+  const [sonuc, setSonuc] = useState<string | null>(null);
   const [yukleniyor, setYukleniyor] = useState(false);
 
-  // Vercel Environment Variables kısmına eklediğin isimle birebir aynı olmalı
+  // Vercel'deki Environment Variables isminle aynı olmalı
   const ANAHTAR = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
   const analizEt = async () => {
@@ -17,7 +18,7 @@ export default function MustafaZekaPaneli() {
     setSonuc(null);
 
     try {
-      // 1. ADIM: Google API'sine istek atıyoruz
+      // Google API isteği
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${ANAHTAR}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,20 +33,16 @@ export default function MustafaZekaPaneli() {
 
       const data = await response.json();
 
-      // 2. ADIM: Hata kontrolü
       if (data.error) {
-        // Eğer API tarafında bir sorun varsa (anahtar hatası vb.) burası çalışır
         setSonuc(`Hata: ${data.error.message}`);
       } else if (data.candidates && data.candidates[0].content.parts[0].text) {
-        // Her şey yolundaysa sonucu göster
         setSonuc(data.candidates[0].content.parts[0].text);
       } else {
-        setSonuc("Beklenmedik bir cevap yapısı geldi.");
+        setSonuc("Cevap yapısı beklediğim gibi gelmedi.");
       }
 
     } catch (hata) {
-      // İnternet kesilmesi veya kod hatası durumunda burası çalışır
-      setSonuc("Bağlantı hatası! Lütfen internetini veya Vercel ayarlarını kontrol et.");
+      setSonuc("Bağlantı hatası oluştu!");
     } finally {
       setYukleniyor(false);
     }
@@ -84,8 +81,7 @@ export default function MustafaZekaPaneli() {
           border: 'none', 
           borderRadius: '12px', 
           cursor: yukleniyor ? 'not-allowed' : 'pointer', 
-          fontWeight: 'bold',
-          transition: '0.3s'
+          fontWeight: 'bold'
         }}
       >
         {yukleniyor ? 'Yapay Zeka Düşünüyor...' : 'Analiz Et'}
@@ -99,8 +95,7 @@ export default function MustafaZekaPaneli() {
           borderRadius: '20px', 
           backgroundColor: '#111827',
           maxWidth: '600px',
-          marginLeft: 'auto',
-          marginRight: 'auto'
+          margin: '40px auto'
         }}>
           <p style={{ fontSize: '24px', fontWeight: 'bold' }}>{sonuc}</p>
         </div>
